@@ -1,0 +1,6 @@
+Product		Quantity		Price		Total		
+------------------------------------------------
+Pen		Quantity		 1.5		Total		
+Notebook		Quantity		 250.99		Total		
+Pencil		Quantity		 0.99		Total		
+Book		Quantity		 16.0		Total		
