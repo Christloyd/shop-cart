@@ -1,23 +1,26 @@
 package com.exercice.controllers;
 
-import java.io.BufferedWriter;
 import java.io.FileInputStream;
-import java.io.FileWriter;
 import java.io.ObjectInputStream;
+import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.exercice.Serialization;
+import com.exercice.serialize.Serialization;
 import com.exercice.entity.ProductEntity;
-
+import com.exercice.http.Cart;
+import com.exercice.services.VerificationService;
 
 
 @RestController
 @RequestMapping("/cart")
 public class CartController extends AbstractController {
+	@Autowired
+	VerificationService verificationService;
 
 	private static final long serialVersionUID = 1L;
 	
@@ -56,25 +59,16 @@ public class CartController extends AbstractController {
             
             System.out.println("Objet désérialisé :");
             
-            if (products != null) {
-            	
-            	FileWriter writer = new FileWriter("src/main/resources/fichierTransporte.txt");
-
-                BufferedWriter bufferedWriter = new BufferedWriter(writer);
-                bufferedWriter.write("Product\t\tQuantity\t\tPrice\t\tTotal\t\t");
-                bufferedWriter.newLine();
-                bufferedWriter.write("------------------------------------------------");
-                bufferedWriter.newLine();
-            	
-            	for (ProductEntity product : products) {
-            		bufferedWriter.write(product.getName() + "\t\t" + "Quantity" + "\t\t "+ product.getPrice() + "\t\tTotal\t\t\n");
-            		System.out.println("id : " + product.getId());
-		            System.out.println("name : " + product.getName());
-		            System.out.println("prix : " + product.getPrice());
-            	}
-            	
-            	bufferedWriter.close();
+            List<Cart> carts = new ArrayList<>();
+ 
+            for (ProductEntity product : products) {
+                Cart c1 = new Cart(product.getId(), product.getName(), product.getPrice());
+                carts.add(c1); // Ajoutez le panier à la liste
             }
+            
+            double resultat = verificationService.Verification(carts);
+			this.LOG.info("le prix total du Controller est de : " + resultat + " euros.");
+            
 		} catch (Exception e) {
             e.printStackTrace();
             System.err.println("Une erreur s'est produite lors de l'écriture du fichier : " + e.getMessage());

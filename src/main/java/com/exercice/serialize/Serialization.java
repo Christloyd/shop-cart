@@ -1,4 +1,4 @@
-package com.exercice;
+package com.exercice.serialize;
 
 import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
