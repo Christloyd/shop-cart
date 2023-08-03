@@ -1,12 +1,22 @@
 package com.exercice.http;
 
+import java.util.Random;
+
 public class Cart {
+	Random random = new Random();
+
 	private int id;
 	private String name;
-	private int quantity;
+	private int quantity = random.nextInt(10)+1;
 	private double price;
-	private double total = getPrice() * getQuantity();
 	
+	
+	public Cart(int id, String name, double price) {
+		this.id = id;
+		this.name = name;
+		this.price = price;
+	}
+
 	public int getId() {
 		return id;
 	}
@@ -20,8 +30,17 @@ public class Cart {
 	public double getPrice() {
 		return price;
 	}
+	
 	public double getTotal() {
-		return total;
+		return getQuantity() * getPrice();
 	}
+
+	@Override
+	public String toString() {
+		return "Cart [id=" + id + ", name=" + name + ", quantity=" + quantity + ", price=" + price + ", total=" + getTotal()
+				+ "]";
+	}
+	
+	
 	
 }

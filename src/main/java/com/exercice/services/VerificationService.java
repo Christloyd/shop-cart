@@ -51,7 +51,7 @@ public class VerificationService extends AbstractService{
 			if(price == null){
 	            erreurs.put("erPrice", "Price obligatoire" + " FROM " + cart.getId());
 			} else {
-	            if(!price.matches(chiffreRegex) || cart.getQuantity() < 0){
+				if(!price.matches(chiffreRegex) && cart.getPrice() < 0){
 	                erreurs.put("erPrice", "Price invalide" + cart.getPrice() + " FROM " + cart.getId());
 	            }
 	        }
@@ -60,7 +60,7 @@ public class VerificationService extends AbstractService{
 			if(quantity == null){
 	            erreurs.put("erQuantity", "Quantity obligatoire" + " FROM " + cart.getId());
 			} else {
-	            if(!quantity.matches(quantityRegex) || cart.getQuantity() < 0 ){
+	            if(!quantity.matches(quantityRegex) && cart.getQuantity() < 0 ){
 	                erreurs.put("erQuantity", "Quantity invalide" + cart.getQuantity() + " FROM " + cart.getId());
 	            }
 	        }

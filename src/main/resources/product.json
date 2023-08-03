@@ -1,0 +1,17 @@
+[
+  {
+    "id": 1,
+    "name": "Table",
+    "price": 125.99
+  },
+  {
+    "id": 2,
+    "name": "Chair",
+    "price": 75.99
+  },
+  {
+    "id": 3,
+    "name": "Door",
+    "price": 89.99
+  }
+]
