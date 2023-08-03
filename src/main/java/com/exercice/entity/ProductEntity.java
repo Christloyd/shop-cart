@@ -65,7 +65,7 @@ public class ProductEntity extends AbstractEntity implements IProductEntity {
 
 	@Override
 	public String toString() {
-		return "ProductEntity [name=" + name + ", price=" + price + "]";
+		return "ProductEntity [id=" + id + ", name=" + name + ", price=" + price + "]";
 	}
 	
 	

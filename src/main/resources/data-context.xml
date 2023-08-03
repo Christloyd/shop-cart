@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation=
+       "http://www.springframework.org/schema/beans 
+       http://www.springframework.org/schema/beans/spring-beans.xsd 
+       http://www.springframework.org/schema/context 
+       http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/aop 
+	   http://www.springframework.org/schema/aop/spring-aop.xsd">
+	
+	<context:component-scan base-package="com.exercice.services, com.exercice.aop" />
+	
+	<bean
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="location" value="product.properties" />
+	</bean>
+	<bean id="c1" class="com.exercice.entity.ProductEntity">
+		<property name="id" value="${id1}"/>
+		<property name="name" value="${name1}"/>
+		<property name="price" value="${price1}"/>
+	</bean>
+	
+	<bean id="c2" class="com.exercice.entity.ProductEntity">
+		<property name="id" value="${id2}"/>
+		<property name="name" value="${name2}"/>
+		<property name="price" value="${price2}"/>
+	</bean>
+	
+	<bean id="c3" class="com.exercice.entity.ProductEntity" autowire="byName">
+		<property name="id" value="3"/>
+		<property name="name" value="regle"/>
+		<property name="price" value="5"/>
+	</bean>
+	
+	<aop:aspectj-autoproxy/>
+	<bean id="logAll" class="com.exercice.aop.LogAspect"/>
+
+</beans>
