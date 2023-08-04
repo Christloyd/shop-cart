@@ -31,7 +31,7 @@
 	
 	<bean id="c3" class="com.exercice.entity.ProductEntity" autowire="byName">
 		<property name="id" value="3"/>
-		<property name="name" value="regle"/>
+		<property name="name" value="ruler"/>
 		<property name="price" value="5"/>
 	</bean>
 	
