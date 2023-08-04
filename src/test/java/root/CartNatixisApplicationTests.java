@@ -5,9 +5,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import com.exercice.CartNatixisApplication;
 import com.exercice.http.Cart;
 
-@SpringBootTest
+@SpringBootTest(classes = CartNatixisApplication.class)
 class CartNatixisApplicationTests {
 	@Test
     public void testGetTotal() {

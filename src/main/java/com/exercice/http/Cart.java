@@ -12,7 +12,7 @@ public class Cart {
 
     private int id; // Cart ID
     private String name; // Cart name
-    private double quantity = random.nextInt(10) + 1; // Random quantity between 1 and 10
+    private int quantity = random.nextInt(10) + 1; // Random quantity between 1 and 10
     private double price; // Cart price
 
     /**
@@ -75,7 +75,7 @@ public class Cart {
     
     
 
-    public void setQuantity(double quantity) {
+    public void setQuantity(int quantity) {
 		this.quantity = quantity;
 	}
 

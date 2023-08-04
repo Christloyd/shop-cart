@@ -4,6 +4,7 @@
 package com.exercice.aop;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
@@ -67,6 +68,12 @@ public class LogAspect {
 	 * @throws IOException if an I/O error occurs
 	 */
 	public void beforeCart() throws IOException {
+		File directory = new File("C:/temp");
+        if (!directory.exists()) {
+            directory.mkdirs(); // Create the directory and its parents if they don't exist
+        }
+		
+
 	    FileWriter writer = new FileWriter("C:/temp/Main.json");
 	    bufferedWriter = new BufferedWriter(writer);
 	    bufferedWriter.write(String.format("%-20s %-20s %-20s %-20s%n", "Product", "Quantity", "Price", "Total"));
