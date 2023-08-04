@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -121,13 +122,20 @@ public class LogAspect {
 	 * Executed after returning from a service call and logs cart data.
 	 *
 	 * @param jp the join point
-	 * @param retVal the returned value from the service
+	 * @param Optional<Double> the returned result from the service
 	 * @throws IOException if an I/O error occurs
 	 */
-	@AfterReturning(pointcut = "afterReturningPointCut()", returning = "retVal")
-	public void afterReturning(JoinPoint jp, double retVal) throws IOException {
-		beforeCart();
-		betweenCart(jp);
-		afterCart(retVal);
+	@AfterReturning(pointcut = "afterReturningPointCut()", returning = "option")
+	public void afterReturning(JoinPoint jp, Optional<Double> option) throws IOException {
+		
+		if(option.isPresent()) {
+        	double result= option.get();
+        	
+			beforeCart();
+			betweenCart(jp);
+			afterCart(result);
+        	
+        }
+
 	}
 }

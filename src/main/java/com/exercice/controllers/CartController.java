@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.exercice.serialize.Serialization;
-import com.exercice.CartNatixisApplication;
 import com.exercice.entity.ProductEntity;
 import com.exercice.http.Cart;
 import com.exercice.services.VerificationService;
@@ -92,15 +91,13 @@ public class CartController extends AbstractController {
             	this.LOG.info("Total price is: " + result + " euros.");
             }
             else {
-            	System.err.println("Error : RESULT NOT FOUND");
+            	System.err.println("Error : RESULT NOT FOUND ! MARCIO I NEED HELP WE ARE IN TROUBLE !!");
             	this.LOG.fatal("Error empty result for method: verificationService.Verification ");
             }
 
         } catch (Exception e) {
-            // Handle exceptions by printing the stack trace and displaying an error message.
-            e.printStackTrace();
-            System.err.println("An error occurred while writing the file: " + e.getMessage());
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "MARCIO I NEED HELP WE ARE IN TROUBLE !!");
+        	// Handle exceptions by printing the stack trace and throwing an error response with HTTP 400 (Bad Request) status.
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
 
     }
