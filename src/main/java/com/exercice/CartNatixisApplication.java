@@ -4,6 +4,7 @@
 package com.exercice;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.apache.commons.logging.Log;
@@ -11,6 +12,8 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.exercice.entity.ProductEntity;
 import com.exercice.http.Cart;
@@ -41,7 +44,7 @@ public class CartNatixisApplication {
             appContext = new ClassPathXmlApplicationContext("data-context.xml");
 
             // Get the VerificationService bean from the application context.
-            VerificationService service = (VerificationService) appContext.getBean("verificationService");
+            VerificationService verificationService = (VerificationService) appContext.getBean("verificationService");
 
             // Get three ProductEntity beans (c1, c2, and c3) from the application context.
             ProductEntity cl1 = (ProductEntity) appContext.getBean("c1");
@@ -75,10 +78,17 @@ public class CartNatixisApplication {
                     .collect(Collectors.toList());
 
             // Calculate the total price by calling the Verification method of the service and passing the distinctCarts list.
-            double resultat = service.Verification(distinctCarts);
+            Optional<Double> option = verificationService.Verification(distinctCarts);
             
-            // Log the total price in euros using the application's logger.
-            CartNatixisApplication.LOG.info("Total price is: " + resultat + " euros.");
+            if(option.isPresent()) {
+            	double result= option.get();
+            	// Log the total price in euros using the application's logger.
+            	CartNatixisApplication.LOG.info("Total price is: " + result + " euros.");
+            }
+            else {
+            	System.err.println("Error : RESULT NOT FOUND");
+            	CartNatixisApplication.LOG.fatal("Error empty result for method: verificationService.Verification ");
+            }
 
         } catch (Exception e) {
             CartNatixisApplication.LOG.fatal("Error", e);
