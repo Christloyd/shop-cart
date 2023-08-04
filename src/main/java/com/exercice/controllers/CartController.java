@@ -5,14 +5,18 @@ import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.exercice.serialize.Serialization;
+import com.exercice.CartNatixisApplication;
 import com.exercice.entity.ProductEntity;
 import com.exercice.http.Cart;
 import com.exercice.services.VerificationService;
@@ -80,15 +84,23 @@ public class CartController extends AbstractController {
             }
 
             // Calculate the total price of the carts using the VerificationService.
-            double resultat = verificationService.Verification(carts);
-
-            // Log the total price using the application's logger.
-            this.LOG.info("The total price from the Controller is: " + resultat + " euros.");
+            Optional<Double> option = verificationService.Verification(carts);
+            
+            if(option.isPresent()) {
+            	double result= option.get();
+            	// Log the total price in euros using the application's logger.
+            	this.LOG.info("Total price is: " + result + " euros.");
+            }
+            else {
+            	System.err.println("Error : RESULT NOT FOUND");
+            	this.LOG.fatal("Error empty result for method: verificationService.Verification ");
+            }
 
         } catch (Exception e) {
             // Handle exceptions by printing the stack trace and displaying an error message.
             e.printStackTrace();
             System.err.println("An error occurred while writing the file: " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "MARCIO I NEED HELP WE ARE IN TROUBLE !!");
         }
 
     }

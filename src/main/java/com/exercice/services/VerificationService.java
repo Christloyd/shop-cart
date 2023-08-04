@@ -3,6 +3,7 @@ package com.exercice.services;
 import java.text.Normalizer;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -42,7 +43,7 @@ public class VerificationService extends AbstractService {
      * @return the total price of all carts if the verification is successful
      * @throws Exception if there are any validation errors, it throws an exception with error details in JSON format
      */
-    public double Verification(List<Cart> carts) throws Exception {
+    public Optional<Double> Verification(List<Cart> carts) throws Exception {
 
         double total = 0;
 
@@ -95,7 +96,8 @@ public class VerificationService extends AbstractService {
         }
 
         // Return the total price if the verification is successful
-        return total;
+        Optional<Double> option= Optional.of(total);
+        return option;
     }
 
 }
