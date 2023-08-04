@@ -1,25 +1,25 @@
 package com.exercice.entity;
-
 import java.io.Serializable;
 
 /**
- * Represente une entite.
+ * Represents an entity. <br/>
+ * This interface defines a contract for entities in the application.
  */
 public interface IEntity extends Serializable {
 
-	/**
-	 * Recupere l'id du compte.
-	 *
-	 * @return l'id du compte.
-	 */
-	public abstract Integer getId();
+    /**
+     * Get the ID of the entity.
+     *
+     * @return the ID of the entity.
+     */
+    public abstract Integer getId();
 
-	/**
-	 * Fixe l'id du compte.
-	 *
-	 * @param unId
-	 *            l'id du compte.
-	 */
-	public abstract void setId(Integer unId);
+    /**
+     * Set the ID of the entity.
+     *
+     * @param unId the ID of the entity.
+     */
+    public abstract void setId(Integer unId);
 
 }
+

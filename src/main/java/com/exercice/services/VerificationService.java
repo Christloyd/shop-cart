@@ -9,73 +9,93 @@ import org.springframework.stereotype.Service;
 import com.exercice.http.Cart;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+/**
+ * Verification service for carts. <br/>
+ * This service class is responsible for verifying the data of the carts before processing them further.
+ */
 @Service("verificationService")
-public class VerificationService extends AbstractService{
-	
-	// 1 à 100 000
-	private String chiffreRegex = "^(100000|[1-9][0-9]{0,4}|[0-9])$";
-	// 0 à 50
-	private String nameRegex = "[a-zA-Z]([- ',.a-zA-Z]{0,48}[.a-zA-Z])?";
-	// 1 à 50 inclusif
-	private String quantityRegex = "^(?:[1-9]|[1-4][0-9]|50)$";
-	
-	private String supprimerAccents(String texte){
-        String copie = 
-            Normalizer.normalize(texte, Normalizer.Form.NFD);
-        copie = 
-           copie.replaceAll("[\\p{InCombiningDiacriticalMarks}]", ""); // le "" enleve les accents vu que cest une chaine vide
-        return copie;
-    }
-	
-	public double Verification(List<Cart> carts) throws Exception {
-		
-		double total = 0;
+public class VerificationService extends AbstractService {
 
-		
-		HashMap<String, String> erreurs = new HashMap<>();
-		
-		for (Cart cart : carts) {
-			
-			String name = cart.getName();
-			if(name == null || name.trim().isEmpty()){
-	            erreurs.put("erName", "Name obligatoire" + " FROM " + cart.getId());
-			} else {
-				name = cart.getName().trim();
-	            String sansAccent = supprimerAccents(name);
-	            if(!sansAccent.matches(nameRegex)){
-	                erreurs.put("erName", "Name invalide" + cart.getName() + " FROM " + cart.getId());
-	            }
-	        }
-			
-			String price = Double.toString(cart.getPrice());
-			if(price == null){
-	            erreurs.put("erPrice", "Price obligatoire" + " FROM " + cart.getId());
-			} else {
-				if(!price.matches(chiffreRegex) && cart.getPrice() < 0){
-	                erreurs.put("erPrice", "Price invalide" + cart.getPrice() + " FROM " + cart.getId());
-	            }
-	        }
-			
-			String quantity = Double.toString(cart.getQuantity());
-			if(quantity == null){
-	            erreurs.put("erQuantity", "Quantity obligatoire" + " FROM " + cart.getId());
-			} else {
-	            if(!quantity.matches(quantityRegex) && cart.getQuantity() < 0 ){
-	                erreurs.put("erQuantity", "Quantity invalide" + cart.getQuantity() + " FROM " + cart.getId());
-	            }
-	        }
-			
-			total += cart.getTotal();
-			
-		}
-		
-		if(!erreurs.isEmpty()){
-        	ObjectMapper jsonMapper = new ObjectMapper();
-        	String erreursJson = jsonMapper.writeValueAsString(erreurs);
-            throw new Exception (erreursJson); // Stop here if the HashMap is not empty
+    // Regular expressions for validation
+    private String chiffreRegex = "^(100000|[1-9][0-9]{0,4}|[0-9])$";
+    private String nameRegex = "[a-zA-Z]([- ',.a-zA-Z]{0,48}[.a-zA-Z])?";
+    private String quantityRegex = "^(?:[1-9]|[1-4][0-9]|50)$";
+
+    /**
+     * Remove accents from a given text. <br/>
+     * This method uses Normalizer to remove diacritical marks (accents) from a given text.
+     *
+     * @param text the text to remove accents from
+     * @return the text without accents
+     */
+    private String removeAccents(String text) {
+        String copy = Normalizer.normalize(text, Normalizer.Form.NFD);
+        copy = copy.replaceAll("[\\p{InCombiningDiacriticalMarks}]", "");
+        return copy;
+    }
+
+    /**
+     * Verify the list of carts. <br/>
+     * This method verifies the data of each cart in the provided list and calculates the total price of all carts.
+     *
+     * @param carts the list of carts to be verified
+     * @return the total price of all carts if the verification is successful
+     * @throws Exception if there are any validation errors, it throws an exception with error details in JSON format
+     */
+    public double Verification(List<Cart> carts) throws Exception {
+
+        double total = 0;
+
+        // HashMap to store validation errors
+        HashMap<String, String> errors = new HashMap<>();
+
+        // Iterate through each cart and perform validation
+        for (Cart cart : carts) {
+            // Validate the name of the cart
+            String name = cart.getName();
+            if (name == null || name.trim().isEmpty()) {
+                errors.put("erName", "Name is required" + " FROM " + cart.getId());
+            } else {
+                name = cart.getName().trim();
+                String withoutAccent = removeAccents(name);
+                if (!withoutAccent.matches(nameRegex)) {
+                    errors.put("erName", "Invalid name: " + cart.getName() + " FROM " + cart.getId());
+                }
+            }
+
+            // Validate the price of the cart
+            String price = Double.toString(cart.getPrice());
+            if (price == null) {
+                errors.put("erPrice", "Price is required" + " FROM " + cart.getId());
+            } else {
+                if (!price.matches(chiffreRegex) && cart.getPrice() < 0) {
+                    errors.put("erPrice", "Invalid price: " + cart.getPrice() + " FROM " + cart.getId());
+                }
+            }
+
+            // Validate the quantity of the cart
+            String quantity = Double.toString(cart.getQuantity());
+            if (quantity == null) {
+                errors.put("erQuantity", "Quantity is required" + " FROM " + cart.getId());
+            } else {
+                if (!quantity.matches(quantityRegex) && cart.getQuantity() < 0) {
+                    errors.put("erQuantity", "Invalid quantity: " + cart.getQuantity() + " FROM " + cart.getId());
+                }
+            }
+
+            // Calculate the total price
+            total += cart.getTotal();
         }
 
-		return total; // executed only if all is fine, Aspect will catch it to create the Json Cart Shop
-	}
-	
+        // If there are any validation errors, throw an exception with the error details in JSON format
+        if (!errors.isEmpty()) {
+            ObjectMapper jsonMapper = new ObjectMapper();
+            String errorsJson = jsonMapper.writeValueAsString(errors);
+            throw new Exception(errorsJson);
+        }
+
+        // Return the total price if the verification is successful
+        return total;
+    }
+
 }

@@ -1,3 +1,6 @@
+/**
+ * This class serves as an Aspect for logging all calls to services.
+ */
 package com.exercice.aop;
 
 import java.io.BufferedWriter;
@@ -18,67 +21,79 @@ import org.springframework.stereotype.Component;
 import com.exercice.http.Cart;
 
 /**
- * Log tous les appels vers les services.
+ * This Aspect logs all calls to services.
  */
 @Component
 @Aspect
 public class LogAspect {
 	private final static Log LOG = LogFactory.getLog(LogAspect.class);
 
-	
 	private BufferedWriter bufferedWriter;
+
 	/**
-	 * Constructeur de l'objet.
+	 * Constructor for the LogAspect object.
 	 */
 	public LogAspect() {
 		super();
 	}
 
 	/**
-	 * Executer avant l'appel à un service.
-	 * 
-	 * @param jp
-	 *          le join point
+	 * Executed before calling a service.
+	 *
+	 * @param jp the join point
 	 */
 	@Before("execution(* com.exercice.services.AbstractService+.*(..) )")
 	public void logBefore(JoinPoint jp) {
 	    if (LogAspect.LOG.isInfoEnabled()) {
-			LogAspect.LOG.info("Passage avant " + jp.getTarget() + " " + jp.getSignature());
+			LogAspect.LOG.info("Before calling " + jp.getTarget() + " " + jp.getSignature());
 		}
 	}
 
 	/**
-	 * Executer après l'appel à un service.
-	 * 
-	 * @param jp
-	 *          le join point
+	 * Executed after calling a service.
+	 *
+	 * @param jp the join point
 	 */
 	@After("execution(* com.exercice.services.AbstractService+.*(..) )")
 	public void logAfter(JoinPoint jp) {
 	    if (LogAspect.LOG.isInfoEnabled()) {
-			LogAspect.LOG.info("Passage apres " + jp.getTarget() + " " + jp.getSignature());
+			LogAspect.LOG.info("After calling " + jp.getTarget() + " " + jp.getSignature());
 		}
 	}
-	
+
+	/**
+	 * Initializes the log file for cart data before calling a service.
+	 *
+	 * @throws IOException if an I/O error occurs
+	 */
 	public void beforeCart() throws IOException {
-	    FileWriter writer = new FileWriter("src/main/resources/fichierMain.txt");
+	    FileWriter writer = new FileWriter("C:/temp/Main.json");
 	    bufferedWriter = new BufferedWriter(writer);
 	    bufferedWriter.write(String.format("%-20s %-20s %-20s %-20s%n", "Product", "Quantity", "Price", "Total"));
 	    bufferedWriter.write("---------------------------------------------------------------------");
 	    bufferedWriter.newLine();
 	}
-	
+
+	/**
+	 * Logs the cart data after calling a service with the returned value.
+	 *
+	 * @param retVal the returned value from the service
+	 * @throws IOException if an I/O error occurs
+	 */
 	public void afterCart(double retVal) throws IOException {
 	    bufferedWriter.write("---------------------------------------------------------------------");
 	    bufferedWriter.newLine();
 	    bufferedWriter.write(String.format("%-20s %-20s %-20s %-20s%n", "Total", "", "", retVal));
 	    bufferedWriter.close();
 	}
-	
-	
-	public void betweenCart(JoinPoint jp) throws IOException {
-		
 
+	/**
+	 * Logs the cart data between before and after calling a service.
+	 *
+	 * @param jp the join point
+	 * @throws IOException if an I/O error occurs
+	 */
+	public void betweenCart(JoinPoint jp) throws IOException {
 		Object[] args = jp.getArgs();
 
 		@SuppressWarnings("unchecked")
@@ -87,20 +102,25 @@ public class LogAspect {
 		for (Cart cart : carts) {
 		    bufferedWriter.write(String.format("%-20s %-20s %-20s %-20s%n", cart.getName(), cart.getQuantity(), cart.getPrice(), cart.getTotal()));
 		}
-
 	}
-	
-	
+
+	/**
+	 * Pointcut definition for the afterReturning advice.
+	 */
 	@Pointcut("execution(* com.exercice.services.AbstractService+.*(..) )")
 	public void afterReturningPointCut() {}
-	
+
+	/**
+	 * Executed after returning from a service call and logs cart data.
+	 *
+	 * @param jp the join point
+	 * @param retVal the returned value from the service
+	 * @throws IOException if an I/O error occurs
+	 */
 	@AfterReturning(pointcut = "afterReturningPointCut()", returning = "retVal")
 	public void afterReturning(JoinPoint jp, double retVal) throws IOException {
-		
-
 		beforeCart();
 		betweenCart(jp);
 		afterCart(retVal);
-
 	}
 }
