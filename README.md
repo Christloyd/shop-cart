@@ -18,7 +18,7 @@ Run to create Main.json :
 
 -server on : http://localhost:8080/cart
 
-
+A Main.json will appear in C:\temp, and everytime you refresh http://localhost:8080/cart in your browser, the price will change in Main.json.
 
 
 AOP Logging
