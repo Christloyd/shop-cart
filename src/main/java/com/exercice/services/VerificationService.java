@@ -18,7 +18,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class VerificationService extends AbstractService {
 
     // Regular expressions for validation
-    private String chiffreRegex = "^(100000|[1-9][0-9]{0,4}|[0-9])$";
+    private String numberRegex = "^(100000|[1-9][0-9]{0,4}|[0-9])$";
     private String nameRegex = "[a-zA-Z]([- ',.a-zA-Z]{0,48}[.a-zA-Z])?";
     private String quantityRegex = "^(?:[1-9]|[1-4][0-9]|50)$";
 
@@ -45,7 +45,7 @@ public class VerificationService extends AbstractService {
      */
     public Optional<Double> Verification(List<Cart> carts) throws Exception {
 
-        double total = 0;
+        Double total = null;
 
         // HashMap to store validation errors
         HashMap<String, String> errors = new HashMap<>();
@@ -69,7 +69,7 @@ public class VerificationService extends AbstractService {
             if (price == null) {
                 errors.put("erPrice", "Price is required" + " FROM " + cart.getId());
             } else {
-                if (!price.matches(chiffreRegex) && cart.getPrice() < 0) {
+                if (!price.matches(numberRegex) && cart.getPrice() < 0) {
                     errors.put("erPrice", "Invalid price: " + cart.getPrice() + " FROM " + cart.getId());
                 }
             }
@@ -84,8 +84,17 @@ public class VerificationService extends AbstractService {
                 }
             }
 
-            // Calculate the total price
-            total += cart.getTotal();
+            
+            // Validate the quantity of the cart
+            if(cart.getTotal() == null)
+            {
+            	this.LOG.fatal("Internal Error FROM ID : "+ cart.getId() +" getter cart.getTotal() = " + cart.getTotal());
+            	throw new Exception("Internal Error FROM ID : "+ cart.getId() +" getter cart.getTotal() = " + cart.getTotal());
+            }
+            else {
+            	// Calculate the total price
+            	total = Double.valueOf(cart.getTotal());
+            }
         }
 
         // If there are any validation errors, throw an exception with the error details in JSON format

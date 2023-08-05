@@ -69,7 +69,7 @@ public class Cart {
      *
      * @return the total cost
      */
-    public double getTotal() {
+    public Double getTotal() {
         return getQuantity() * getPrice();
     }
     
